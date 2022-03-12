@@ -4,14 +4,15 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"runtime"
+	"strings"
 )
 
 func main() {
-	http.HandleFunc("/", indexHandlerHelloWorld)
+	http.HandleFunc("/user/", indexHandlerHelloWorld)
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
 
 func indexHandlerHelloWorld(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hello world, I'm running search on %s with an %s CPU ", runtime.GOOS, runtime.GOARCH)
+	userid := strings.TrimPrefix(r.URL.Path, "/user/")
+	fmt.Fprintf(w, "Hello! running search for user %s", userid)
 }
