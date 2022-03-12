@@ -1,2 +1,2 @@
 #!/bin/bash 
-rm -Rf ./target
+rm -Rf ./bin

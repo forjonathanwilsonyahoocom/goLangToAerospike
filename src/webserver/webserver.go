@@ -15,5 +15,11 @@ func main() {
 func userAccess(w http.ResponseWriter, r *http.Request) {
 	userid := strings.TrimPrefix(r.URL.Path, "/user/")
 	apikey := r.URL.Query().Get("api_key")
-	fmt.Fprintf(w, "Hello! running search for user %s with api_key %s", userid, apikey)
+	response, _ := getUser(userid, apikey)
+	fmt.Fprintf(w, response)
+}
+
+func getUser(userId string, apiKey string) (string, error) {
+
+	return string(fmt.Sprintf("Hello! running jwAreoSpike search for user %s with api_key %s", userId, apiKey)), nil
 }

@@ -1,2 +1,2 @@
 #!/bin/bash 
-GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -a -o ./target/go-webserver ./src/webserver.go || exit 1 
+GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -a -o ./bin/go-webserver ./src/webserver/webserver.go || exit 1 
