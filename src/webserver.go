@@ -8,11 +8,11 @@ import (
 )
 
 func main() {
-	http.HandleFunc("/user/", indexHandlerHelloWorld)
+	http.HandleFunc("/user/", userAccess)
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
 
-func indexHandlerHelloWorld(w http.ResponseWriter, r *http.Request) {
+func userAccess(w http.ResponseWriter, r *http.Request) {
 	userid := strings.TrimPrefix(r.URL.Path, "/user/")
 	apikey := r.URL.Query().Get("api_key")
 	fmt.Fprintf(w, "Hello! running search for user %s with api_key %s", userid, apikey)
