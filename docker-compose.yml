@@ -3,7 +3,7 @@ services:
   areospike-server:
     image: aerospike/aerospike-server 
     container_name: aerospike
-    ports: 
+    ports:
       - '3000-3002:3000-3002'
   go-server:
     build:
