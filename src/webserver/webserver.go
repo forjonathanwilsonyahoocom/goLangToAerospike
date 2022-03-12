@@ -30,24 +30,17 @@ func main() {
 	err = client.Put(nil, key, bins)
 	panicOnError(err)
 
-	http.HandleFunc("/user/", userAccess)
+	http.HandleFunc("/user/", userAccessor(client))
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
 
-func userAccessor(c Client) func(func(error), string, string) {
-	return func(returnIfError func(error), userId string, apiKey string) (string, error) {
-		intClientId, err := strconv.Atoi(userId)
-		key, err := aero.NewKey("test", "users", intClientId)
-		returnIfError(err)
-
+func userAccessor(c *aero.Client) func(http.ResponseWriter, *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		userid := strings.TrimPrefix(r.URL.Path, "/user/")
+		apikey := r.URL.Query().Get("api_key")
+		response, _ := getUser(userid, apikey, c, returnError(w))
+		fmt.Fprintf(w, response)
 	}
-}
-
-func userAccess(w http.ResponseWriter, r *http.Request) {
-	userid := strings.TrimPrefix(r.URL.Path, "/user/")
-	apikey := r.URL.Query().Get("api_key")
-	response, _ := getUser(userid, apikey, returnError(w))
-	fmt.Fprintf(w, response)
 }
 
 func panicOnError(err error) {
@@ -74,9 +67,7 @@ func returnError(w http.ResponseWriter) func(error) {
 		return
 	}
 }
-func getUser(userId string, apiKey string, returnIfError func(error)) (string, error) {
-	client, err := aero.NewClient("192.168.88.190", 3000)
-	returnIfError(err)
+func getUser(userId string, apiKey string, client *aero.Client, returnIfError func(error)) (string, error) {
 	intClientId, err := strconv.Atoi(userId)
 	key, err := aero.NewKey("test", "users", intClientId)
 	returnIfError(err)
