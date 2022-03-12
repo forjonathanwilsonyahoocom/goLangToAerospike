@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -20,7 +21,7 @@ func main() {
 
 	// define some bins with data
 	bins := aero.BinMap{
-		"api_key":    42,
+		"api_key":    "42",
 		"first_name": "jonathan",
 		"last_name":  "wilson",
 		"company":    "mindbodyengineer",
@@ -38,8 +39,13 @@ func userAccessor(c *aero.Client) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		userid := strings.TrimPrefix(r.URL.Path, "/user/")
 		apikey := r.URL.Query().Get("api_key")
-		response, _ := getUser(userid, apikey, c, returnError(w))
-		fmt.Fprintf(w, response)
+		response, err := getUser(userid, apikey, c)
+		if err == nil {
+			fmt.Fprintf(w, response)
+		} else {
+			returnError(w)(err)
+			fmt.Fprintf(w, "")
+		}
 	}
 }
 
@@ -51,30 +57,49 @@ func panicOnError(err error) {
 
 func returnError(w http.ResponseWriter) func(error) {
 	return func(err error) {
-
 		if err != nil {
-			w.WriteHeader(http.StatusNotFound)
-			w.Header().Set("Content-Type", "application/json")
-			resp := make(map[string]string)
-			resp["message"] = fmt.Sprintf("Resource Not Found, %s", err)
-			jsonResp, err := json.Marshal(resp)
-			if err != nil {
-				log.Fatalf("Error happened in JSON marshal. Err: %s", err)
+			if err.Error() == "401" {
+				w.WriteHeader(http.StatusUnauthorized)
+				w.Header().Set("Content-Type", "application/json")
+				resp := make(map[string]string)
+				resp["message"] = "Unauthorized"
+				jsonResp, err := json.Marshal(resp)
+				if err != nil {
+					log.Fatalf("Error happened in JSON marshal. Err: %s", err)
+				}
+				w.Write(jsonResp)
+			} else {
+				w.WriteHeader(http.StatusNotFound)
+				w.Header().Set("Content-Type", "application/json")
+				resp := make(map[string]string)
+				resp["message"] = "Resource Not Found"
+				jsonResp, err := json.Marshal(resp)
+				if err != nil {
+					log.Fatalf("Error happened in JSON marshal. Err: %s", err)
+				}
+				w.Write(jsonResp)
 			}
-			w.Write(jsonResp)
 		}
 
-		return
 	}
 }
-func getUser(userId string, apiKey string, client *aero.Client, returnIfError func(error)) (string, error) {
+
+func getUser(userId string, apiKey string, client *aero.Client) (string, error) {
 	intClientId, err := strconv.Atoi(userId)
 	key, err := aero.NewKey("test", "users", intClientId)
-	returnIfError(err)
-
-	// read it back!
-	rec, err := client.Get(nil, key)
-	returnIfError(err)
-
-	return string(fmt.Sprintf("Hello! running jwAreoSpike search for user %s with api_key %s found %s", userId, apiKey, rec)), nil
+	if err == nil {
+		rec, err := client.Get(nil, key)
+		if err == nil {
+			if rec.Bins["api_key"] == apiKey {
+				jsonResp, err := json.Marshal(rec.Bins)
+				return string(jsonResp), err
+			} else {
+				return "", errors.New("401")
+			}
+		} else {
+			return "", err
+		}
+	} else {
+		return "", err
+	}
 }
