@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	client, err := aero.NewClient("localhost", 3002)
+	client, err := aero.NewClient("localhost", 3000)
 	panicOnError(err)
 
 	key, err := aero.NewKey("test", "users", 11)
