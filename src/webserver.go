@@ -14,5 +14,6 @@ func main() {
 
 func indexHandlerHelloWorld(w http.ResponseWriter, r *http.Request) {
 	userid := strings.TrimPrefix(r.URL.Path, "/user/")
-	fmt.Fprintf(w, "Hello! running search for user %s", userid)
+	apikey := r.URL.Query().Get("api_key")
+	fmt.Fprintf(w, "Hello! running search for user %s with api_key %s", userid, apikey)
 }
