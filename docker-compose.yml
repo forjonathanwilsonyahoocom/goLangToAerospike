@@ -1,10 +1,12 @@
-version: '3'
+version: '3.3'
 services:
   areospike-server:
     image: aerospike/aerospike-server 
     container_name: aerospike
   go-server:
-    build: .
+    build:
+      context: ./
+      dockerfile: deploy/Dockerfile
     container_name: go-web-server
     restart: always
     ports:
