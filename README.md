@@ -32,4 +32,4 @@ i played a little with the aerospike tools docker, the aql command is scripted i
     insert into test.users(PK,api_key,first_name,last_name,company) values (3,"551","Ronnie","Wood","The Rolling Stones")
     insert into test.users(PK,api_key,first_name,last_name,company) values (4,"551","Keith","Richards","The Rolling Stones")
 
-
+allowing arbitrary test data load
