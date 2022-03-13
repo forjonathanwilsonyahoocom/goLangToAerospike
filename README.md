@@ -19,11 +19,15 @@ this will return the single record written to aerospike on startup
 
     curl http://localhost:8000/user/11?api_key=42
 
+response should be 200 OK with content:
+
+    {"api_key":"42","company":"mindbodyengineer","first_name":"jonathan","last_name":"wilson"}
+
 untill other data is loaded any other api key will result in 401 response for user 11, other users will return not found
 
 the tests currently only are working while the aero spike container is up
 
-regarding loading additional test data
+### regarding loading additional test data
 
 i played a little with the aerospike tools docker, the aql command is scripted in the aql-console.sh file, from the aql console adding test records is a matter of:
 
