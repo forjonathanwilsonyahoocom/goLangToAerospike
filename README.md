@@ -23,3 +23,13 @@ any other api key will result in 401 response for user 11, other users will retu
 
 the tests currently only are working while the aero spike container is up
 
+regarding loading test data
+
+i played a little with the aerospike tools docker, the aql command is scripted in the aql-console.sh file, from there adding test records is a matter of:
+
+    insert into test.users(PK,api_key,first_name,last_name,company) values (1,"551","Mick","Jagger","The Rolling Stones")
+    insert into test.users(PK,api_key,first_name,last_name,company) values (2,"551","Charlie","Watts","The Rolling Stones")
+    insert into test.users(PK,api_key,first_name,last_name,company) values (3,"551","Ronnie","Wood","The Rolling Stones")
+    insert into test.users(PK,api_key,first_name,last_name,company) values (4,"551","Keith","Richards","The Rolling Stones")
+
+
