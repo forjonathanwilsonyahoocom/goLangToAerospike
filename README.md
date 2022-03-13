@@ -1,7 +1,7 @@
 # goLangToAerospike
 attempt to spin up an aerospike server, load with test data, and provide access
 
-NOTE: although the webserver is now using docker dns, the tests that run locally still have to change the ip address the webserver will use to reach aerospike untill i find a better discovery method, that ip is in the main func of src/webserver/webserver.go
+NOTE: although the webserver is now using docker dns, the tests that run locally still have to change the ip address the webserver will use to reach aerospike untill i find a better discovery method, that ip is in the main func of src/webserver/webserver_test.go
 
 to run this test, use the shell scripts to clean.sh and build.sh
 
