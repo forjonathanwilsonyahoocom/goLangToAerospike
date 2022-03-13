@@ -21,3 +21,5 @@ curl http://localhost:8000/user/11?api_key=42
 
 any other api key will result in 401 response for user 11, other users will return not found
 
+the tests currently only are working while the aero spike container is up
+
