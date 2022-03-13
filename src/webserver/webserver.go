@@ -13,7 +13,7 @@ import (
 )
 
 func main() {
-	client, err := aero.NewClient("192.168.88.190", 3000)
+	client, err := aero.NewClient("aerospike", 3000)
 	panicOnError(err)
 
 	key, err := aero.NewKey("test", "users", 11)
