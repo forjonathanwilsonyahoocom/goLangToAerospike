@@ -97,7 +97,7 @@ func getUser(userId string, apiKey string, client *aero.Client) (string, error) 
 				return "", errors.New("401")
 			}
 		} else {
-			return "", err
+			return "", errors.New("404")
 		}
 	} else {
 		return "", err

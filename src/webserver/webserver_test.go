@@ -3,37 +3,40 @@ package main
 import (
 	"errors"
 	"testing"
+
+	aero "github.com/aerospike/aerospike-client-go"
 )
 
+var client, err = aero.NewClient("192.168.88.190", 3000)
+
+//this ip will be wrong...
+//the aerospike docker has to be up for this test to work
 func TestUserAccess(t *testing.T) {
-	mockError := errors.New("uh oh")
 	subtests := []struct {
-		name         string
-		user, key    string
-		areoSpikeGet func(string, string) (string, error)
-		expectedErr  error
+		name            string
+		user, key       string
+		aerospikeClient *aero.Client
+		expectedErr     error
 	}{
 		{
-			name: "happy path",
-			user: "u",
-			key:  "p",
-			areoSpikeGet: func(s string, s2 string) (rs string, err error) {
-				return s, nil
-			},
+			name:            "happy path",
+			user:            "11",
+			key:             "42",
+			aerospikeClient: client,
 		},
 		{
-			name: "error from areoSpikeGet",
-			areoSpikeGet: func(s string, s2 string) (rs string, err error) {
-				return s, mockError
-			},
-			//	expectedErr: mockError,
+			name:            "error from areoSpikeGet",
+			aerospikeClient: client,
+			expectedErr:     errors.New("404"),
 		},
 	}
 	for _, subtest := range subtests {
 		t.Run(subtest.name, func(t *testing.T) {
-			_, err := getUser(subtest.user, subtest.key)
+			_, err := getUser(subtest.user, subtest.key, subtest.aerospikeClient)
 			if !errors.Is(err, subtest.expectedErr) {
-				t.Errorf("expected error (%v), got error (%v)", subtest.expectedErr, err)
+				if err.Error() != err.Error() {
+					t.Errorf("expected error (%v), got error (%v)", subtest.expectedErr, err)
+				}
 			}
 		})
 	}
